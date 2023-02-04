@@ -1,0 +1,11 @@
+name: LobbyPVP
+version: '${project.version}'
+main: wozniaktv.lobbypvp.LobbyPVP
+api-version: 1.19
+authors: [ WoZniaK_TV ]
+description: Simple and customizable LobbyPVP
+commands:
+  lpvpreload:
+    description: "Reload the config of the Plugin"
+    usage: /lpvpreload
+    permission: "lobbypvp.reload"
