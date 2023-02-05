@@ -48,6 +48,7 @@ public class onDeath implements Listener {
             JavaPlugin.getPlugin(LobbyPVP.class).bossBar.replace(event.getEntity(), null);
             JavaPlugin.getPlugin(LobbyPVP.class).bossBar.remove(event.getEntity());
             JavaPlugin.getPlugin(LobbyPVP.class).isPlayerLeaving.remove(event.getEntity());
+            JavaPlugin.getPlugin(LobbyPVP.class).ability_charging.remove(event.getEntity());
 
         }
 

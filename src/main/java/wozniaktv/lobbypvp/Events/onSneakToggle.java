@@ -34,6 +34,7 @@ public class onSneakToggle implements Listener {
                 return;
 
             }
+
             JavaPlugin.getPlugin(LobbyPVP.class).ability_charging.put(event.getPlayer(),0);
             event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW,222222,0));
 

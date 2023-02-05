@@ -11,7 +11,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import wozniaktv.lobbypvp.LobbyPVP;
+import xyz.xenondevs.particle.ParticleBuilder;
+import xyz.xenondevs.particle.ParticleEffect;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,6 +57,8 @@ public class onRightClick implements Listener {
             JavaPlugin.getPlugin(LobbyPVP.class).ability_charging.remove(event.getPlayer());
 
 
+            event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(),Sound.ENTITY_WARDEN_SONIC_CHARGE,100F,1F);
+
             new BukkitRunnable() {
                 double t = 0;
                 Location location = event.getPlayer().getLocation();
@@ -61,6 +66,10 @@ public class onRightClick implements Listener {
                 Vector direction = location.getDirection().normalize();
 
                 public void run() {
+
+                    location = event.getPlayer().getLocation();
+                    Vector direction = location.getDirection().normalize();
+
                     t = t + 4.3;
 
                     double x = direction.getX() * t;
@@ -73,7 +82,7 @@ public class onRightClick implements Listener {
 
 
                     location.getWorld().spawnParticle(Particle.SONIC_BOOM, location, 1, 0, 0, 0, 0);
-                    //location.getWorld().spawnParticle(Particle.FLAME, location, 30, 0.15, 0.15, 0.15, 0);
+                    location.getWorld().spawnParticle(Particle.ASH, location, 30, 0.15, 0.15, 0.15, 0);
                     location.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, location, 30, 0.15, 0.15, 0.15, 0);
 
                     if (!location.getBlock().isPassable()) {
@@ -114,13 +123,7 @@ public class onRightClick implements Listener {
                         this.cancel();
                     }
                 }
-            }.runTaskTimer(JavaPlugin.getPlugin(LobbyPVP.class), 0, 1);
-
-            for(Player p : JavaPlugin.getPlugin(LobbyPVP.class).getServer().getOnlinePlayers()){
-
-                p.playSound(event.getPlayer().getLocation(), Sound.ENTITY_ARROW_SHOOT,100f,1.2f);
-
-            }
+            }.runTaskTimer(JavaPlugin.getPlugin(LobbyPVP.class), 30, 1);
 
             JavaPlugin.getPlugin(LobbyPVP.class).cooldown_ability.put(event.getPlayer(),JavaPlugin.getPlugin(LobbyPVP.class).getConfig().getInt("config.ability-cooldown"));
             event.getPlayer().setExp(0);
