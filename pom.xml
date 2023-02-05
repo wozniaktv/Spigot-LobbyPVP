@@ -6,7 +6,7 @@
 
     <groupId>wozniaktv</groupId>
     <artifactId>LobbyPVP</artifactId>
-    <version>Release-6.7</version>
+    <version>Release-12.5</version>
     <packaging>jar</packaging>
 
     <name>LobbyPVP</name>
@@ -71,6 +71,11 @@
             <artifactId>spigot-api</artifactId>
             <version>1.19.3-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>xyz.xenondevs</groupId>
+            <artifactId>particle</artifactId>
+            <version>1.8.3</version>
         </dependency>
     </dependencies>
 </project>

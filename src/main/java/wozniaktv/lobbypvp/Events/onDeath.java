@@ -51,9 +51,9 @@ public class onDeath implements Listener {
 
         }
 
-        if(JavaPlugin.getPlugin(LobbyPVP.class).cooldown_arrow.containsKey(event.getEntity())) {
+        if(JavaPlugin.getPlugin(LobbyPVP.class).cooldown_ability.containsKey(event.getEntity())) {
 
-            JavaPlugin.getPlugin(LobbyPVP.class).cooldown_arrow.remove(event.getEntity());
+            JavaPlugin.getPlugin(LobbyPVP.class).cooldown_ability.remove(event.getEntity());
             event.getEntity().setExp(0);
             event.getEntity().setLevel(0);
 

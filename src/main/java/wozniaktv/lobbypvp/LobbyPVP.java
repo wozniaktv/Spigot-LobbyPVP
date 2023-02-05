@@ -1,8 +1,9 @@
 package wozniaktv.lobbypvp;
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -26,7 +27,9 @@ public final class LobbyPVP extends JavaPlugin {
     public HashMap<Player, BossBar> bossBar;
     public HashMap<Player, Boolean> isPlayerLeaving;
 
-    public HashMap<Player, Integer> cooldown_arrow;
+    public HashMap<Player, Integer> cooldown_ability;
+
+    public HashMap<Player,Integer> ability_charging;
 
     @Override
     public void onEnable() {   //SkillExecutor
@@ -37,7 +40,9 @@ public final class LobbyPVP extends JavaPlugin {
 
         isPlayerLeaving = new HashMap<>();
 
-        cooldown_arrow = new HashMap<>();
+        cooldown_ability = new HashMap<>();
+
+        ability_charging = new HashMap<>();
 
         saveDefaultConfig();
 
@@ -69,6 +74,8 @@ public final class LobbyPVP extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new onArrowPickup(), this);
 
+        getServer().getPluginManager().registerEvents(new onSneakToggle(), this);
+
 
         for(Player p : getServer().getOnlinePlayers()){
 
@@ -95,7 +102,7 @@ public final class LobbyPVP extends JavaPlugin {
             bossBar.remove(p);
             isPlayerLeaving.remove(p);
 
-            cooldown_arrow.remove(p);
+            cooldown_ability.remove(p);
             p.setExp(0);
             p.setLevel(0);
 
@@ -152,19 +159,47 @@ public final class LobbyPVP extends JavaPlugin {
 
                 for(Player p : Bukkit.getOnlinePlayers()){
 
-                    if(cooldown_arrow.containsKey(p)){
+                    if(ability_charging.containsKey(p)){
 
-                        cooldown_arrow.replace(p,cooldown_arrow.get(p)-1);
-
-                        float l = cooldown_arrow.get(p);
-
-                        p.setLevel(cooldown_arrow.get(p));
+                        int needed_charge = getConfig().getInt("config.ability-needed-charge");
 
 
-                        if(cooldown_arrow.get(p) <= 0){
+                        String msg = getConfig().getString("config.ability-message-charge");
+
+                        if(ability_charging.get(p)<needed_charge) {
+
+                            ability_charging.replace(p, ability_charging.get(p) + 1);
+                            p.playSound(p,Sound.BLOCK_AMETHYST_BLOCK_STEP,100f,1f);
+
+                        }
+
+                        msg = msg.replaceAll("%charge%",ability_charging.get(p).toString());
+                        msg = msg.replaceAll("%needed_seconds%", String.valueOf(needed_charge));
+
+                        msg = ChatColor.translateAlternateColorCodes('&',msg);
 
 
-                            cooldown_arrow.remove(p);
+
+                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.translateAlternateColorCodes('&',msg)));
+
+
+
+
+                    }
+
+                    if(cooldown_ability.containsKey(p)){
+
+                        cooldown_ability.replace(p, cooldown_ability.get(p)-1);
+
+                        float l = cooldown_ability.get(p);
+
+                        p.setLevel(cooldown_ability.get(p));
+
+
+                        if(cooldown_ability.get(p) <= 0){
+
+
+                            cooldown_ability.remove(p);
                             p.setExp(0.9999F);
                             p.setLevel(0);
                             p.playSound(p.getLocation(),Sound.BLOCK_STONE_BUTTON_CLICK_ON,100F,2F);
@@ -194,6 +229,8 @@ public final class LobbyPVP extends JavaPlugin {
                             removePlayerInventory(p);
 
                             isPlayerLeaving.remove(p);
+                            ability_charging.remove(p);
+                            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(""));
 
                             p.playSound(p,Sound.BLOCK_NOTE_BLOCK_BANJO,100,2);
                             p.setHealth(20);

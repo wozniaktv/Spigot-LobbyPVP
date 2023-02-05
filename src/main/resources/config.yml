@@ -28,12 +28,15 @@ config:
   suppress-damage: true # Allow people to attack eachtother when out of combat without letting them do damage.
   warning-ability-message:
     title: "&4Wait!"
-    subtitle: "&bAbility in cooldown!"
+    subtitle: "&cAbility in cooldown!"
+  mustcharge-ability-message:
+    title: ""
+    subtitle: "&cYou must charge the ability!"
   prevent-all-damage-when-pvp-off: false # This will prevent ALL THE SOURCE OF DAMAGES, false = prevent only damage between players.
-  ability-damage: 6
-  ability-speed: 3
-  ability-knockback: 2
+  ability-damage: 15
   ability-cooldown: 5
+  ability-message-charge: "&2Sonic Boom > &f%charge% &7/ &f%needed_seconds%"
+  ability-needed-charge: 3
 
 bossbar:
   display:
