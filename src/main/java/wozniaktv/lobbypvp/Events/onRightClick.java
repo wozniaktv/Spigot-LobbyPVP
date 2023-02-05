@@ -73,8 +73,8 @@ public class onRightClick implements Listener {
 
 
                     location.getWorld().spawnParticle(Particle.SONIC_BOOM, location, 1, 0, 0, 0, 0);
-                    location.getWorld().spawnParticle(Particle.FLAME, location, 15, 0.5, 0.5, 0.5, 0);
-                    location.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, location, 15, 0.5, 0.5, 0.5, 0);
+                    //location.getWorld().spawnParticle(Particle.FLAME, location, 30, 0.15, 0.15, 0.15, 0);
+                    location.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, location, 30, 0.15, 0.15, 0.15, 0);
 
                     if (!location.getBlock().isPassable()) {
 
