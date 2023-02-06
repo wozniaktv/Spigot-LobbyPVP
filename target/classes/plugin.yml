@@ -1,6 +1,6 @@
 name: LobbyPVP
-version: 'Release-16.4'
-main: wozniaktv.lobbypvp.LobbyPVP
+version: 'Release-21.5'
+main: wozniaktv.lobbypvp.Main
 api-version: 1.19
 authors: [ WoZniaK_TV ]
 description: Simple and customizable LobbyPVP

@@ -1,7 +1,6 @@
-package wozniaktv.lobbypvp;
+package wozniaktv.lobbypvp.Features.LobbyPVP;
 
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
@@ -14,14 +13,17 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import wozniaktv.lobbypvp.Commands.Lpvpreload;
-import wozniaktv.lobbypvp.Events.*;
+import wozniaktv.lobbypvp.Features.LobbyPVP.Commands.Lpvpreload;
+import wozniaktv.lobbypvp.Features.LobbyPVP.Events.*;
+import wozniaktv.lobbypvp.Main;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-public final class LobbyPVP extends JavaPlugin {
+public final class LobbyPVP{
+
+    private Main main;
 
     public HashMap<Player, Double> timer_stop_fighting;
     public HashMap<Player, BossBar> bossBar;
@@ -31,8 +33,10 @@ public final class LobbyPVP extends JavaPlugin {
 
     public HashMap<Player,Integer> ability_charging;
 
-    @Override
+
     public void onEnable() {   //SkillExecutor
+
+        main = JavaPlugin.getPlugin(Main.class);
 
         timer_stop_fighting = new HashMap<>();
 
@@ -44,41 +48,41 @@ public final class LobbyPVP extends JavaPlugin {
 
         ability_charging = new HashMap<>();
 
-        saveDefaultConfig();
+        main.saveDefaultConfig();
 
-        reloadConfig();
+        main.reloadConfig();
 
-        saveConfig();
+        main.saveConfig();
 
         start_timer();
 
 
 
-        getCommand("lpvpreload").setExecutor(new Lpvpreload());
+        main.getCommand("lpvpreload").setExecutor(new Lpvpreload(this));
 
 
 
-        getServer().getPluginManager().registerEvents(new onHotbarItemChange(),this);
+        main.getServer().getPluginManager().registerEvents(new onHotbarItemChange(this),main);
 
-        getServer().getPluginManager().registerEvents(new onHit(), this);
+        main.getServer().getPluginManager().registerEvents(new onHit(this), main);
 
-        getServer().getPluginManager().registerEvents(new onDeath(), this);
+        main.getServer().getPluginManager().registerEvents(new onDeath(this), main);
 
-        getServer().getPluginManager().registerEvents(new onJoin(),this);
+        main.getServer().getPluginManager().registerEvents(new onJoin(this),main);
 
-        getServer().getPluginManager().registerEvents(new onRespawn(), this);
+        main.getServer().getPluginManager().registerEvents(new onRespawn(this), main);
 
-        getServer().getPluginManager().registerEvents(new onRightClick(), this);
+        main.getServer().getPluginManager().registerEvents(new onRightClick(this), main);
 
-        getServer().getPluginManager().registerEvents(new onSneakToggle(), this);
-
-
-        for(Player p : getServer().getOnlinePlayers()){
+        main.getServer().getPluginManager().registerEvents(new onSneakToggle(this), main);
 
 
-            if(p.getInventory().getHeldItemSlot() == getConfig().getInt("inventory.weapon.inventory-index")){
+        for(Player p : main.getServer().getOnlinePlayers()){
+
+
+            if(p.getInventory().getHeldItemSlot() == main.getConfig().getInt("inventory.weapon.inventory-index")){
                 addPlayerFighting(p);
-                p.getInventory().setItem(JavaPlugin.getPlugin(LobbyPVP.class).getConfig().getInt("inventory.weapon.inventory-index"),JavaPlugin.getPlugin(LobbyPVP.class).get_weapon());
+                p.getInventory().setItem(main.getConfig().getInt("inventory.weapon.inventory-index"),get_weapon());
             }
 
         }
@@ -86,10 +90,10 @@ public final class LobbyPVP extends JavaPlugin {
 
     }
 
-    @Override
+
     public void onDisable() {
 
-        for(Player p : getServer().getOnlinePlayers()){
+        for(Player p : main.getServer().getOnlinePlayers()){
 
             removePlayerInventory(p);
             timer_stop_fighting.remove(p);
@@ -97,7 +101,6 @@ public final class LobbyPVP extends JavaPlugin {
             bossBar.replace(p,null);
             bossBar.remove(p);
             isPlayerLeaving.remove(p);
-
             cooldown_ability.remove(p);
             p.setExp(0);
             p.setLevel(0);
@@ -109,11 +112,11 @@ public final class LobbyPVP extends JavaPlugin {
 
     public ItemStack get_weapon(){
 
-        ItemStack weapon = new ItemStack(Objects.requireNonNull(Material.getMaterial(Objects.requireNonNull(JavaPlugin.getPlugin(LobbyPVP.class).getConfig().getString("inventory.weapon.type")))));
+        ItemStack weapon = new ItemStack(Objects.requireNonNull(Material.getMaterial(Objects.requireNonNull(main.getConfig().getString("inventory.weapon.type")))));
 
         ItemMeta weapon_meta = weapon.getItemMeta();
 
-        weapon_meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',JavaPlugin.getPlugin(LobbyPVP.class).getConfig().getString("inventory.weapon.display-name")));
+        weapon_meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',main.getConfig().getString("inventory.weapon.display-name")));
 
         weapon_meta.setUnbreakable(true);
 
@@ -121,7 +124,7 @@ public final class LobbyPVP extends JavaPlugin {
         weapon_meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         weapon_meta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL,1,true);
 
-        List<String> lore_weapon = getConfig().getStringList("inventory.weapon.lore");
+        List<String> lore_weapon = main.getConfig().getStringList("inventory.weapon.lore");
 
         if(lore_weapon!=null){
 
@@ -145,7 +148,7 @@ public final class LobbyPVP extends JavaPlugin {
 
     public void start_timer(){
 
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+        main.getServer().getScheduler().scheduleSyncRepeatingTask(main, new Runnable() {
 
 
 
@@ -157,10 +160,10 @@ public final class LobbyPVP extends JavaPlugin {
 
                     if(ability_charging.containsKey(p)){
 
-                        int needed_charge = getConfig().getInt("config.ability-needed-charge");
+                        int needed_charge = main.getConfig().getInt("config.ability-needed-charge");
 
 
-                        String msg = getConfig().getString("config.ability-message-charge");
+                        String msg = main.getConfig().getString("config.ability-message-charge");
 
                         if(ability_charging.get(p)<needed_charge) {
 
@@ -256,7 +259,7 @@ public final class LobbyPVP extends JavaPlugin {
 
         bb = Bukkit.createBossBar("-", BarColor.RED, BarStyle.SEGMENTED_6);
 
-        bb.setTitle(ChatColor.translateAlternateColorCodes('&',getConfig().getString("bossbar.display.name")));
+        bb.setTitle(ChatColor.translateAlternateColorCodes('&',main.getConfig().getString("bossbar.display.name")));
         bb.setVisible(true);
         bb.setProgress(1.0);
 
@@ -266,12 +269,12 @@ public final class LobbyPVP extends JavaPlugin {
 
     public void setPlayerInventory(Player p){
 
-        ItemStack helmet = new ItemStack(Objects.requireNonNull(Material.getMaterial(Objects.requireNonNull(getConfig().getString("inventory.helmet.type")))),1);
+        ItemStack helmet = new ItemStack(Objects.requireNonNull(Material.getMaterial(Objects.requireNonNull(main.getConfig().getString("inventory.helmet.type")))),1);
 
         ItemMeta helmet_itemMeta = helmet.getItemMeta();
 
-        helmet_itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(getConfig().getString("inventory.helmet.display-name"))));
-        List<String> lore_helmet = getConfig().getStringList("inventory.helmet.lore");
+        helmet_itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(main.getConfig().getString("inventory.helmet.display-name"))));
+        List<String> lore_helmet = main.getConfig().getStringList("inventory.helmet.lore");
 
         if(lore_helmet!=null){
 
@@ -295,13 +298,13 @@ public final class LobbyPVP extends JavaPlugin {
 
 
 
-        ItemStack chestplate = new ItemStack(Objects.requireNonNull(Material.getMaterial(Objects.requireNonNull(getConfig().getString("inventory.chestplate.type")))),1);
+        ItemStack chestplate = new ItemStack(Objects.requireNonNull(Material.getMaterial(Objects.requireNonNull(main.getConfig().getString("inventory.chestplate.type")))),1);
 
         ItemMeta chestplate_itemMeta = chestplate.getItemMeta();
 
-        chestplate_itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(getConfig().getString("inventory.chestplate.display-name"))));
+        chestplate_itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(main.getConfig().getString("inventory.chestplate.display-name"))));
 
-        List<String> lore_chestplate = getConfig().getStringList("inventory.chestplate.lore");
+        List<String> lore_chestplate = main.getConfig().getStringList("inventory.chestplate.lore");
 
         if(lore_chestplate!=null){
 
@@ -325,12 +328,12 @@ public final class LobbyPVP extends JavaPlugin {
         p.getInventory().setItem(EquipmentSlot.CHEST,chestplate);
 
 
-        ItemStack leggings = new ItemStack(Objects.requireNonNull(Material.getMaterial(Objects.requireNonNull(getConfig().getString("inventory.leggings.type")))),1);
+        ItemStack leggings = new ItemStack(Objects.requireNonNull(Material.getMaterial(Objects.requireNonNull(main.getConfig().getString("inventory.leggings.type")))),1);
 
         ItemMeta leggings_itemMeta = leggings.getItemMeta();
 
-        leggings_itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(getConfig().getString("inventory.leggings.display-name"))));
-        List<String> lore_leggings = getConfig().getStringList("inventory.leggings.lore");
+        leggings_itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(main.getConfig().getString("inventory.leggings.display-name"))));
+        List<String> lore_leggings = main.getConfig().getStringList("inventory.leggings.lore");
 
         if(lore_leggings!=null){
 
@@ -354,12 +357,12 @@ public final class LobbyPVP extends JavaPlugin {
 
         p.getInventory().setItem(EquipmentSlot.LEGS,leggings);
 
-        ItemStack boots = new ItemStack(Objects.requireNonNull(Material.getMaterial(Objects.requireNonNull(getConfig().getString("inventory.boots.type")))),1);
+        ItemStack boots = new ItemStack(Objects.requireNonNull(Material.getMaterial(Objects.requireNonNull(main.getConfig().getString("inventory.boots.type")))),1);
 
         ItemMeta boots_itemMeta = boots.getItemMeta();
 
-        boots_itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(getConfig().getString("inventory.boots.display-name"))));
-        List<String> lore_boots = getConfig().getStringList("inventory.boots.lore");
+        boots_itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(main.getConfig().getString("inventory.boots.display-name"))));
+        List<String> lore_boots = main.getConfig().getStringList("inventory.boots.lore");
 
         if(lore_boots!=null){
 

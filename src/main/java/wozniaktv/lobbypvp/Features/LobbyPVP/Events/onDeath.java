@@ -1,4 +1,4 @@
-package wozniaktv.lobbypvp.Events;
+package wozniaktv.lobbypvp.Features.LobbyPVP.Events;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
@@ -9,10 +9,15 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
-import wozniaktv.lobbypvp.LobbyPVP;
+import wozniaktv.lobbypvp.Features.LobbyPVP.LobbyPVP;
+import wozniaktv.lobbypvp.Main;
 
 public class onDeath implements Listener {
 
+    private LobbyPVP manager;
+    public onDeath(LobbyPVP manager){
+        this.manager = manager;
+    }
 
     @EventHandler
     public void onDeathEntity(EntityDeathEvent event){
@@ -39,22 +44,22 @@ public class onDeath implements Listener {
         // Rimozione inventario e status di combattimento alla vittima
 
 
-        JavaPlugin.getPlugin(LobbyPVP.class).removePlayerInventory(event.getEntity());
+        manager.removePlayerInventory(event.getEntity());
 
-        if(JavaPlugin.getPlugin(LobbyPVP.class).timer_stop_fighting.containsKey(event.getEntity())) {
+        if(manager.timer_stop_fighting.containsKey(event.getEntity())) {
 
-            JavaPlugin.getPlugin(LobbyPVP.class).timer_stop_fighting.remove(event.getEntity());
-            JavaPlugin.getPlugin(LobbyPVP.class).bossBar.get(event.getEntity()).setVisible(false);
-            JavaPlugin.getPlugin(LobbyPVP.class).bossBar.replace(event.getEntity(), null);
-            JavaPlugin.getPlugin(LobbyPVP.class).bossBar.remove(event.getEntity());
-            JavaPlugin.getPlugin(LobbyPVP.class).isPlayerLeaving.remove(event.getEntity());
-            JavaPlugin.getPlugin(LobbyPVP.class).ability_charging.remove(event.getEntity());
+            manager.timer_stop_fighting.remove(event.getEntity());
+            manager.bossBar.get(event.getEntity()).setVisible(false);
+            manager.bossBar.replace(event.getEntity(), null);
+            manager.bossBar.remove(event.getEntity());
+            manager.isPlayerLeaving.remove(event.getEntity());
+            manager.ability_charging.remove(event.getEntity());
 
         }
 
-        if(JavaPlugin.getPlugin(LobbyPVP.class).cooldown_ability.containsKey(event.getEntity())) {
+        if(manager.cooldown_ability.containsKey(event.getEntity())) {
 
-            JavaPlugin.getPlugin(LobbyPVP.class).cooldown_ability.remove(event.getEntity());
+            manager.cooldown_ability.remove(event.getEntity());
             event.getEntity().setExp(0);
             event.getEntity().setLevel(0);
 
@@ -71,7 +76,7 @@ public class onDeath implements Listener {
         event.getEntity().getKiller().setHealth(20);
 
 
-        String death_message = JavaPlugin.getPlugin(LobbyPVP.class).getConfig().getString("messages.player_kill");
+        String death_message = JavaPlugin.getPlugin(Main.class).getConfig().getString("messages.player_kill");
         Player victim = event.getEntity();
         Player killer = event.getEntity().getKiller();
         death_message = death_message.replaceAll("%victim%",victim.getName());

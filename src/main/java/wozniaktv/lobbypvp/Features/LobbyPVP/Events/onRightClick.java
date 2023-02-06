@@ -1,4 +1,4 @@
-package wozniaktv.lobbypvp.Events;
+package wozniaktv.lobbypvp.Features.LobbyPVP.Events;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -10,51 +10,56 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import wozniaktv.lobbypvp.LobbyPVP;
-import xyz.xenondevs.particle.ParticleBuilder;
-import xyz.xenondevs.particle.ParticleEffect;
+import wozniaktv.lobbypvp.Features.LobbyPVP.LobbyPVP;
+import wozniaktv.lobbypvp.Main;
 
-import java.awt.Color;
 import java.util.List;
 import java.util.Objects;
 
 public class onRightClick implements Listener {
 
+
+    private LobbyPVP manager;
+
+    public onRightClick(LobbyPVP manager){
+        this.manager = manager;
+    }
+
     @EventHandler
     public void RightClick(PlayerInteractEvent event){
 
-        if(!JavaPlugin.getPlugin(LobbyPVP.class).timer_stop_fighting.containsKey(event.getPlayer())) return;
+        if(!manager.timer_stop_fighting.containsKey(event.getPlayer())) return;
 
-        if((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && (event.getPlayer().getInventory().getItemInMainHand()).getType()== JavaPlugin.getPlugin(LobbyPVP.class).get_weapon().getType()){
+        if((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) && (event.getPlayer().getInventory().getItemInMainHand()).getType()== manager.get_weapon().getType()){
 
 
-            if(JavaPlugin.getPlugin(LobbyPVP.class).cooldown_ability.containsKey(event.getPlayer())){
+            if(manager.cooldown_ability.containsKey(event.getPlayer())){
 
                 event.getPlayer().playSound(event.getPlayer().getLocation(),Sound.ENTITY_VILLAGER_NO,100F,1F);
-                event.getPlayer().sendTitle(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(JavaPlugin.getPlugin(LobbyPVP.class).getConfig().getString("config.warning-ability-message.title"))),ChatColor.translateAlternateColorCodes('&',Objects.requireNonNull(JavaPlugin.getPlugin(LobbyPVP.class).getConfig().getString("config.warning-ability-message.subtitle"))),0,20,0);
+                event.getPlayer().sendTitle(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(JavaPlugin.getPlugin(Main.class).getConfig().getString("config.warning-ability-message.title"))),ChatColor.translateAlternateColorCodes('&',Objects.requireNonNull(JavaPlugin.getPlugin(Main.class).getConfig().getString("config.warning-ability-message.subtitle"))),0,20,0);
 
                 return;
             }
 
-            if(!JavaPlugin.getPlugin(LobbyPVP.class).ability_charging.containsKey(event.getPlayer())){
+            if(!manager.ability_charging.containsKey(event.getPlayer())){
 
                 event.getPlayer().playSound(event.getPlayer().getLocation(),Sound.ENTITY_VILLAGER_NO,100F,1F);
-                event.getPlayer().sendTitle(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(JavaPlugin.getPlugin(LobbyPVP.class).getConfig().getString("config.mustcharge-ability-message.title"))),ChatColor.translateAlternateColorCodes('&',Objects.requireNonNull(JavaPlugin.getPlugin(LobbyPVP.class).getConfig().getString("config.mustcharge-ability-message.subtitle"))),0,20,0);
+                event.getPlayer().sendTitle(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(JavaPlugin.getPlugin(Main.class).getConfig().getString("config.mustcharge-ability-message.title"))),ChatColor.translateAlternateColorCodes('&',Objects.requireNonNull(JavaPlugin.getPlugin(Main.class).getConfig().getString("config.mustcharge-ability-message.subtitle"))),0,20,0);
 
                 return;
             }
 
-            if(JavaPlugin.getPlugin(LobbyPVP.class).ability_charging.get(event.getPlayer()) < JavaPlugin.getPlugin(LobbyPVP.class).getConfig().getInt("config.ability-needed-charge")){
+            if(manager.ability_charging.get(event.getPlayer()) < JavaPlugin.getPlugin(Main.class).getConfig().getInt("config.ability-needed-charge")){
 
                 event.getPlayer().playSound(event.getPlayer().getLocation(),Sound.ENTITY_VILLAGER_NO,100F,1F);
-                event.getPlayer().sendTitle(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(JavaPlugin.getPlugin(LobbyPVP.class).getConfig().getString("config.mustcharge-ability-message.title"))),ChatColor.translateAlternateColorCodes('&',Objects.requireNonNull(JavaPlugin.getPlugin(LobbyPVP.class).getConfig().getString("config.mustcharge-ability-message.subtitle"))),0,20,0);
+                event.getPlayer().sendTitle(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(JavaPlugin.getPlugin(Main.class).getConfig().getString("config.mustcharge-ability-message.title"))),ChatColor.translateAlternateColorCodes('&',Objects.requireNonNull(JavaPlugin.getPlugin(Main.class).getConfig().getString("config.mustcharge-ability-message.subtitle"))),0,20,0);
 
                 return;
 
             }
 
             event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(""));
-            JavaPlugin.getPlugin(LobbyPVP.class).ability_charging.remove(event.getPlayer());
+            manager.ability_charging.remove(event.getPlayer());
 
 
             event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(),Sound.ENTITY_WARDEN_SONIC_CHARGE,100F,1F);
@@ -103,9 +108,9 @@ public class onRightClick implements Listener {
 
                             if (!(player.getUniqueId() == event.getPlayer().getUniqueId())) {
 
-                                if(JavaPlugin.getPlugin(LobbyPVP.class).timer_stop_fighting.containsKey(player)){
+                                if(manager.timer_stop_fighting.containsKey(player)){
 
-                                    player.damage(JavaPlugin.getPlugin(LobbyPVP.class).getConfig().getInt("config.ability-damage"));
+                                    player.damage(JavaPlugin.getPlugin(Main.class).getConfig().getInt("config.ability-damage"));
                                     location.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 50, 1, 1, 1, 0);
                                     this.cancel();
 
@@ -123,11 +128,11 @@ public class onRightClick implements Listener {
                         this.cancel();
                     }
                 }
-            }.runTaskTimer(JavaPlugin.getPlugin(LobbyPVP.class), 30, 1);
+            }.runTaskTimer(JavaPlugin.getPlugin(Main.class), 30, 1);
 
-            JavaPlugin.getPlugin(LobbyPVP.class).cooldown_ability.put(event.getPlayer(),JavaPlugin.getPlugin(LobbyPVP.class).getConfig().getInt("config.ability-cooldown"));
+            manager.cooldown_ability.put(event.getPlayer(),JavaPlugin.getPlugin(Main.class).getConfig().getInt("config.ability-cooldown"));
             event.getPlayer().setExp(0);
-            event.getPlayer().setLevel(JavaPlugin.getPlugin(LobbyPVP.class).getConfig().getInt("config.ability-cooldown"));
+            event.getPlayer().setLevel(JavaPlugin.getPlugin(Main.class).getConfig().getInt("config.ability-cooldown"));
 
 
 
