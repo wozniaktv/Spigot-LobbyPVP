@@ -1,5 +1,5 @@
 name: LobbyPVP
-version: 'Release-52.5'
+version: 'Release-53.7'
 main: wozniaktv.lobbypvp.Main
 api-version: 1.19
 authors: [ WoZniaK_TV ]
