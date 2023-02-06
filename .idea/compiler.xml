@@ -9,8 +9,5 @@
         <module name="LobbyPVP" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="LobbyPVP" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>

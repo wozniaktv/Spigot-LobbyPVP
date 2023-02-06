@@ -15,6 +15,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -267,6 +269,16 @@ public class Events implements Listener {
 
         }
 
+
+    }
+
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event){
+
+        if(event.getSlotType() == InventoryType.SlotType.ARMOR){
+            event.setCancelled(true);
+        }
 
     }
 
