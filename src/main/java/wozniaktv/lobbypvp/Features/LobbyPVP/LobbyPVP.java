@@ -167,6 +167,11 @@ public final class LobbyPVP{
 
                             p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.translateAlternateColorCodes('&',msg)));
 
+                            if(ability_charging.get(p)==needed_charge-1){
+                                p.getWorld().playSound(p.getLocation(),Sound.ENTITY_WARDEN_SONIC_CHARGE,100F,1F);
+                            }
+
+
                         }else{
 
 
@@ -174,20 +179,20 @@ public final class LobbyPVP{
                             ability_charging.remove(p);
 
 
-                            p.getWorld().playSound(p.getLocation(),Sound.ENTITY_WARDEN_SONIC_CHARGE,100F,1F);
-
+                            Location loc = p.getLocation();
                             new BukkitRunnable() {
                                 double t = 0;
-                                Location location = p.getLocation();
                                 Boolean isPassableBlock = true;
+
+                                final Location location = loc;
+
                                 Vector direction = location.getDirection().normalize();
 
                                 public void run() {
 
-                                    location = p.getLocation();
                                     Vector direction = location.getDirection().normalize();
 
-                                    t = t + 4.3;
+                                    t = t + 1.3;
 
                                     double x = direction.getX() * t;
 
@@ -240,7 +245,7 @@ public final class LobbyPVP{
                                         this.cancel();
                                     }
                                 }
-                            }.runTaskTimer(JavaPlugin.getPlugin(Main.class), 30, 1);
+                            }.runTaskTimer(JavaPlugin.getPlugin(Main.class), 0, 1);
 
                             cooldown_ability.put(p,JavaPlugin.getPlugin(Main.class).getConfig().getInt("config.ability-cooldown"));
                             p.setExp(0);
