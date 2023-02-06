@@ -1,0 +1,71 @@
+#
+# .----------------. .----------------. .----------------. .----------------. .----------------. .----------------. .----------------. .----------------.
+#| .--------------. | .--------------. | .--------------. | .--------------. | .--------------. | .--------------. | .--------------. | .--------------. |
+#| |   _____      | | |     ____     | | |   ______     | | |   ______     | | |  ____  ____  | | |   ______     | | | ____   ____  | | |   ______     | |
+#| |  |_   _|     | | |   .'    `.   | | |  |_   _ \    | | |  |_   _ \    | | | |_  _||_  _| | | |  |_   __ \   | | ||_  _| |_  _| | | |  |_   __ \   | |
+#| |    | |       | | |  /  .--.  \  | | |    | |_) |   | | |    | |_) |   | | |   \ \  / /   | | |    | |__) |  | | |  \ \   / /   | | |    | |__) |  | |
+#| |    | |   _   | | |  | |    | |  | | |    |  __'.   | | |    |  __'.   | | |    \ \/ /    | | |    |  ___/   | | |   \ \ / /    | | |    |  ___/   | |
+#| |   _| |__/ |  | | |  \  `--'  /  | | |   _| |__) |  | | |   _| |__) |  | | |    _|  |_    | | |   _| |_      | | |    \ ' /     | | |   _| |_      | |
+#| |  |________|  | | |   `.____.'   | | |  |_______/   | | |  |_______/   | | |   |______|   | | |  |_____|     | | |     \_/      | | |  |_____|     | |
+#| |              | | |              | | |              | | |              | | |              | | |              | | |              | | |              | |
+#| '--------------' | '--------------' | '--------------' | '--------------' | '--------------' | '--------------' | '--------------' | '--------------' |
+# '----------------' '----------------' '----------------' '----------------' '----------------' '----------------' '----------------' '----------------'
+#
+# By WozDev
+
+
+
+
+#Version 1.0 - the items when not fighting will be automatically set to null
+
+#Armor to set when the player's in fight.
+messages:
+  player_kill: "&c%victim% &7has been killed by &c%killer%&7."
+  who_killed_me: "&c%killer% &7killed you."
+  you_killed: "&7You have killed &c%victim%&7."
+
+config:
+  suppress-damage: true # Allow people to attack eachtother when out of combat without letting them do damage.
+  warning-ability-message:
+    title: "&4Wait!"
+    subtitle: "&cAbility in cooldown!"
+  mustcharge-ability-message:
+    title: ""
+    subtitle: "&cYou must charge the ability!"
+  prevent-all-damage-when-pvp-off: false # This will prevent ALL THE SOURCE OF DAMAGES, false = prevent only damage between players.
+  ability-damage: 15
+  ability-cooldown: 5
+  ability-message-charge: "&2Sonic Boom > &f%charge% &7/ &f%needed_seconds%"
+  ability-needed-charge: 3
+
+bossbar:
+  display:
+    name: "&cCombat Enabled"
+
+inventory:
+  weapon:
+    inventory-index: 4
+    type: IRON_SWORD
+    display-name: "&cCombat Sword"
+    lore:
+      - "&7Keep in hand to join combat mode"
+  helmet:
+    type: IRON_HELMET       # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+    display-name: "&cCombat Armor"
+    lore:
+      - "&7Protects you during the fight."
+  chestplate:
+    type: IRON_CHESTPLATE
+    display-name: "&cCombat Armor"
+    lore:
+      - "&7Protects you during the fight."
+  leggings:
+    type: IRON_LEGGINGS
+    display-name: "&cCombat Armor"
+    lore:
+      - "&7Protects you during the fight."
+  boots:
+    type: IRON_BOOTS
+    display-name: "&cCombat Boots"
+    lore:
+      - "&7Protects you during the fight."

@@ -1,0 +1,11 @@
+wozniaktv\lobbypvp\Events\onSneakToggle.class
+wozniaktv\lobbypvp\Events\onRespawn.class
+wozniaktv\lobbypvp\LobbyPVP$1.class
+wozniaktv\lobbypvp\Events\onDeath.class
+wozniaktv\lobbypvp\Events\onRightClick$1.class
+wozniaktv\lobbypvp\Commands\Lpvpreload.class
+wozniaktv\lobbypvp\Events\onJoin.class
+wozniaktv\lobbypvp\LobbyPVP.class
+wozniaktv\lobbypvp\Events\onRightClick.class
+wozniaktv\lobbypvp\Events\onHit.class
+wozniaktv\lobbypvp\Events\onHotbarItemChange.class
