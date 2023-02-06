@@ -7,12 +7,15 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 import wozniaktv.lobbypvp.Features.LobbyPVP.Commands.Lpvpreload;
 import wozniaktv.lobbypvp.Features.LobbyPVP.Events.*;
 import wozniaktv.lobbypvp.Main;
@@ -60,21 +63,7 @@ public final class LobbyPVP{
 
         main.getCommand("lpvpreload").setExecutor(new Lpvpreload(this));
 
-
-
-        main.getServer().getPluginManager().registerEvents(new onHotbarItemChange(this),main);
-
-        main.getServer().getPluginManager().registerEvents(new onHit(this), main);
-
-        main.getServer().getPluginManager().registerEvents(new onDeath(this), main);
-
-        main.getServer().getPluginManager().registerEvents(new onJoin(this),main);
-
-        main.getServer().getPluginManager().registerEvents(new onRespawn(this), main);
-
-        main.getServer().getPluginManager().registerEvents(new onRightClick(this), main);
-
-        main.getServer().getPluginManager().registerEvents(new onSneakToggle(this), main);
+        main.getServer().getPluginManager().registerEvents(new Events(this),main);
 
 
         for(Player p : main.getServer().getOnlinePlayers()){
@@ -170,16 +159,94 @@ public final class LobbyPVP{
                             ability_charging.replace(p, ability_charging.get(p) + 1);
                             p.playSound(p,Sound.BLOCK_AMETHYST_BLOCK_STEP,100f,1f);
 
+                            msg = msg.replaceAll("%charge%",ability_charging.get(p).toString());
+                            msg = msg.replaceAll("%needed_seconds%", String.valueOf(needed_charge));
+
+                            msg = ChatColor.translateAlternateColorCodes('&',msg);
+
+
+                            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.translateAlternateColorCodes('&',msg)));
+
+                        }else{
+
+
+                            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(""));
+                            ability_charging.remove(p);
+
+
+                            p.getWorld().playSound(p.getLocation(),Sound.ENTITY_WARDEN_SONIC_CHARGE,100F,1F);
+
+                            new BukkitRunnable() {
+                                double t = 0;
+                                Location location = p.getLocation();
+                                Boolean isPassableBlock = true;
+                                Vector direction = location.getDirection().normalize();
+
+                                public void run() {
+
+                                    location = p.getLocation();
+                                    Vector direction = location.getDirection().normalize();
+
+                                    t = t + 4.3;
+
+                                    double x = direction.getX() * t;
+
+                                    double y = direction.getY() * t + 1.4;
+
+                                    double z = direction.getZ() * t;
+
+                                    location.add(x, y, z);
+
+
+                                    location.getWorld().spawnParticle(Particle.SONIC_BOOM, location, 1, 0, 0, 0, 0);
+                                    location.getWorld().spawnParticle(Particle.ASH, location, 30, 0.15, 0.15, 0.15, 0);
+                                    location.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, location, 30, 0.15, 0.15, 0.15, 0);
+
+                                    if (!location.getBlock().isPassable()) {
+
+                                        isPassableBlock = false;
+
+                                    }
+
+                                    location.getWorld().playSound(location, Sound.ENTITY_WARDEN_SONIC_BOOM, 0.6F, 0.9F);
+
+                                    List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 2, 2, 2);
+
+                                    for (Entity entity : entities) {
+
+                                        if (entity instanceof Player){
+
+                                            Player player = (Player) entity;
+
+                                            if (!(player.getUniqueId() == p.getUniqueId())) {
+
+                                                if(timer_stop_fighting.containsKey(player)){
+
+                                                    player.damage(JavaPlugin.getPlugin(Main.class).getConfig().getInt("config.ability-damage"));
+                                                    location.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 50, 1, 1, 1, 0);
+                                                    this.cancel();
+
+                                                }
+
+
+                                            }
+
+                                        }
+                                    }
+
+                                    location.subtract(x, y, z);
+
+                                    if (t > 150 || !isPassableBlock) { //int here is length
+                                        this.cancel();
+                                    }
+                                }
+                            }.runTaskTimer(JavaPlugin.getPlugin(Main.class), 30, 1);
+
+                            cooldown_ability.put(p,JavaPlugin.getPlugin(Main.class).getConfig().getInt("config.ability-cooldown"));
+                            p.setExp(0);
+                            p.setLevel(JavaPlugin.getPlugin(Main.class).getConfig().getInt("config.ability-cooldown"));
+
                         }
-
-                        msg = msg.replaceAll("%charge%",ability_charging.get(p).toString());
-                        msg = msg.replaceAll("%needed_seconds%", String.valueOf(needed_charge));
-
-                        msg = ChatColor.translateAlternateColorCodes('&',msg);
-
-
-
-                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.translateAlternateColorCodes('&',msg)));
 
 
 

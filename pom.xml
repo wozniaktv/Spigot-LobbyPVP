@@ -6,7 +6,7 @@
 
     <groupId>wozniaktv</groupId>
     <artifactId>LobbyPVP</artifactId>
-    <version>Release-21.5</version>
+    <version>Release-40.5</version>
     <packaging>jar</packaging>
 
     <name>LobbyPVP</name>
