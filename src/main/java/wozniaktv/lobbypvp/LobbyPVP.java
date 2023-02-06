@@ -70,10 +70,6 @@ public final class LobbyPVP extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new onRightClick(), this);
 
-        getServer().getPluginManager().registerEvents(new onArrowHit(), this);
-
-        getServer().getPluginManager().registerEvents(new onArrowPickup(), this);
-
         getServer().getPluginManager().registerEvents(new onSneakToggle(), this);
 
 
